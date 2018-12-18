@@ -1,0 +1,80 @@
+select id,year from productions where year > 2011 and id~'Harry Potter' and attr is NULL;
+/*
+id                                  | year
+----------------------------------------------------------------------+------
+Life After Hogwarts: Episode 1 - Harry Potter Goes to Therapy (2012) | 2012
+Nizard Harry Potter Rap (2012)                                       | 2012
+Drunk Harry Potter (2013)                                            | 2013
+Harry Potter v. Voldemort (2012)                                     | 2012
+Harry Potter and the Escape from Gringotts (2014)                    | 2014
+Harry Potter and the Unlikely Collaboration (2013)                   | 2013
+Harry Potter Casts a revealing spell (2016)                          | 2016
+Harry Potter's Parent Teacher Conference (2012)                      | 2012
+Hufflepuff: A Harry Potter Rap Parody (2015)                         | 2015
+(9 rows)
+
+*/
+
+select id,character from roles where id in (select id from productions where
+    attr is NULL and year < 1980) and pid='Streep, Meryl';
+/*
+id                  |   character
+-------------------------------------+---------------
+Everybody Rides the Carousel (1975) | Stage 6
+Julia (1977)                        | Anne Marie
+Kramer vs. Kramer (1979)            | Joanna Kramer
+Manhattan (1979)                    | Jill
+The Deer Hunter (1978)              | Linda
+The Seduction of Joe Tynan (1979)   | Karen Traynor
+(6 rows)
+
+*/
+
+select id,character,billing from roles where pid='Eastwood, Clint' and
+    id in (select id from directors where pid='Leone, Sergio (I)');
+/*
+id                   | character | billing
+----------------------------------------+-----------+---------
+Il buono, il brutto, il cattivo (1966) | Blondie   |       2
+Per qualche dollaro in più (1965)      | Monco     |       1
+Per un pugno di dollari (1964)         | Joe       |       1
+(3 rows)
+
+*/
+
+select id from productions where id in (select id from roles where
+    pid='Nimoy, Leonard') and id in (select id from roles where
+    pid='Hawking, Stephen');
+/*
+id
+---------------------------------------------------
+How William Shatner Changed the World (2005) (TV)
+The Science of Star Trek (1995) (TV)
+(2 rows)
+*/
+
+select id,pid,character from roles where id in (select id from productions
+    where (id='The Matrix (1999)' or id='The Matrix Reloaded (2003)')
+    and attr is NULL);
+
+
+select id,pid,character from roles where (id in (select id from productions
+    where (id='The Matrix (1999)' and attr is NULL) and id in (select id from
+        productions where  id='The Matrix Reloaded (2003)' and attr is NULL)));
+
+/*Get The Matrix and The Matrix Reloaded*/
+select id from productions where (id='The Matrix (1999)' or id='The Matrix Reloaded (2003)')
+        and attr is NULL;
+
+/*Get actors in 1st or 2nd movie*/
+select id,pid from roles where id in (select id from productions where
+    (id='The Matrix (1999)' or id='The Matrix Reloaded (2003)')
+        and attr is NULL);
+
+delete from (select id,pid from roles where id in (select id from productions where
+    (id='The Matrix (1999)' or id='The Matrix Reloaded (2003)')
+        and attr is NULL));
+
+select id,pid,character from roles where pid in (select pid from roles where
+    id in (select id from productions where id='The Matrix (1999)' and attr is NULL) and id in
+    (select id from productions where id='The Matrix Reloaded (2003)'and attr is NULL));
